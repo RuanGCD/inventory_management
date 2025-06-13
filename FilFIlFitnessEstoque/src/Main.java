@@ -9,9 +9,8 @@ public class Main {
 
         JPanel mainPanel = new JPanel(new CardLayout());
 
-        // Painel inicial
+        // HOME
         JPanel homeScreen = new JPanel(new BorderLayout());
-
         JLabel titulo = new JLabel("BALCÃO", SwingConstants.CENTER);
         titulo.setFont(new Font("Arial", Font.BOLD, 72));
         titulo.setBackground(Color.WHITE);
@@ -32,73 +31,88 @@ public class Main {
         botoesPanel.add(botaoRelatorios);
         botoesPanel.add(botaoVendas);
         botoesPanel.add(botaoSair);
+
         homeScreen.add(titulo, BorderLayout.NORTH);
         homeScreen.add(botoesPanel, BorderLayout.CENTER);
 
-        // Painel de cadastro
+        // CADASTRO
+        JPanel cadastroScreen = new JPanel(new BorderLayout());
+        JLabel cadastrotittle = new JLabel("CADASTROS", SwingConstants.CENTER);
+        cadastrotittle.setFont(new Font("Arial", Font.BOLD, 32));
+        cadastroScreen.add(cadastrotittle, BorderLayout.NORTH);
 
-        JPanel cadastroScreen = new JPanel();
-        cadastroScreen.setLayout(new BoxLayout(cadastroScreen, BoxLayout.Y_AXIS));
+        JPanel botoesCadastroPanel = new JPanel(new GridLayout(2, 2, 20, 20));
+        botoesCadastroPanel.setBorder(BorderFactory.createEmptyBorder(30, 100, 30, 100));
 
-        JLabel cadastrotittle = new JLabel("CADASTROS");
-        cadastroScreen.add(cadastrotittle);
+        String[] categorias = new String[]{"Moda Praia", "Moda Academia", "Clientes", "Fornecedor"};
 
-        // Barra de menus
-        JMenuBar menuBarCad = new JMenuBar();
+        for (String categoria : categorias) {
+            JButton botao = new JButton(categoria);
+            botao.setFont(new Font("Arial", Font.BOLD, 16));
+            botao.setPreferredSize(new Dimension(200, 100));
 
-        // Menus
-        JMenu menuPraia = new JMenu("Moda Praia");
-        JMenu menuAcad = new JMenu("Moda Academia");
-        JMenu menuCliente = new JMenu("Clientes");
-        JMenu menuFornecedor = new JMenu("Fornecedor");
+            JPopupMenu popup = new JPopupMenu();
+            JMenuItem itemCadastrar = new JMenuItem("Cadastrar");
+            JMenuItem itemDeletar = new JMenuItem("Deletar");
+            JMenuItem itemExcluir = new JMenuItem("Excluir");
 
-        // Criando itens de menu
+            popup.add(itemCadastrar);
+            popup.add(itemDeletar);
+            popup.add(itemExcluir);
 
-        JMenuItem itemCadastrar = new JMenuItem("Cadastrar");
-        JMenuItem itemDeletar = new JMenuItem("Deletar");
-        JMenuItem itemExcluir = new JMenuItem("Excluir");
+            // Ação especial para Moda Praia
+            if (categoria.equals("Moda Praia")) {
+                itemCadastrar.addActionListener(ev -> {
+                    JDialog dialog = new JDialog((JFrame) null, "Cadastro - Moda Praia", true);
+                    dialog.setSize(400, 400);
+                    dialog.setLayout(new BorderLayout());
 
-        // Adiciona itens aos menus
-        menuPraia.add(itemCadastrar);
-        menuPraia.add(itemDeletar);
-        menuPraia.add(itemExcluir);
+                    JPanel inputsPanel = new JPanel(new GridLayout(8, 2, 10, 10));
+                    inputsPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        menuAcad.add(new JMenuItem("Cadastrar"));
-        menuAcad.add(new JMenuItem("Deletar"));
-        menuAcad.add(new JMenuItem("Excluir"));
+                   String[] labels = {"Nome", "Tamanho", "Cor", "Preço", "Quantidade", "Estampa", "Tipo", "Material"};
 
-        menuCliente.add(new JMenuItem("Cadastrar"));
-        menuCliente.add(new JMenuItem("Deletar"));
-        menuCliente.add(new JMenuItem("Excluir"));
+                    for (String label : labels) {
+                        inputsPanel.add(new JLabel(label + ":"));
+                        inputsPanel.add(new JTextField());
+}
 
-        menuFornecedor.add(new JMenuItem("Cadastrar"));
-        menuFornecedor.add(new JMenuItem("Deletar"));
-        menuFornecedor.add(new JMenuItem("Excluir"));
+                    JButton btnEnviar = new JButton("Enviar");
+                    btnEnviar.addActionListener(enviarEvent -> {
+                        // Lógica para salvar os dados pode ser inserida aqui
+                        dialog.dispose();
+                    });
 
-        // Adiciona menus à barra
-        menuBarCad.add(menuPraia);
-        menuBarCad.add(menuAcad);
-        menuBarCad.add(menuCliente);
-        menuBarCad.add(menuFornecedor);
+                    JPanel bottomPanel = new JPanel();
+                    bottomPanel.add(btnEnviar);
 
-        // Botão de voltar
+                    dialog.add(inputsPanel, BorderLayout.CENTER);
+                    dialog.add(bottomPanel, BorderLayout.SOUTH);
+                    dialog.setLocationRelativeTo(null);
+                    dialog.setVisible(true);
+                });
+            }
+
+            botao.addActionListener(e -> popup.show(botao, botao.getWidth() / 2, botao.getHeight() / 2));
+            botoesCadastroPanel.add(botao);
+        }
+
+        cadastroScreen.add(botoesCadastroPanel, BorderLayout.CENTER);
         JButton backbutton = new JButton("Voltar");
+        backbutton.setFont(new Font("Arial", Font.PLAIN, 14));
+        cadastroScreen.add(backbutton, BorderLayout.SOUTH);
 
-        // Adiciona ao painel
-        cadastroScreen.add(menuBarCad);
-        cadastroScreen.add(backbutton);
-
-        //Painel de vendas
+        // VENDAS
         JPanel screenVendas = new JPanel();
         JLabel vendastittle = new JLabel("Vender");
+        screenVendas.add(vendastittle);
 
-
-        // Adiciona os painéis ao CardLayout
+        // Adiciona todas as telas ao painel principal
         mainPanel.add(homeScreen, "HOME");
         mainPanel.add(cadastroScreen, "CADASTRO");
         mainPanel.add(screenVendas, "VENDA");
 
-        // Evento de clique no botão
+        // Troca de telas
         botaoCadastro.addActionListener(e -> {
             CardLayout cl = (CardLayout) mainPanel.getLayout();
             cl.show(mainPanel, "CADASTRO");
@@ -108,20 +122,19 @@ public class Main {
             CardLayout cl = (CardLayout) mainPanel.getLayout();
             cl.show(mainPanel, "HOME");
         });
+
         botaoVendas.addActionListener(e -> {
             CardLayout cl = (CardLayout) mainPanel.getLayout();
             cl.show(mainPanel, "VENDA");
         });
-        botaoSair.addActionListener(e -> {
-            System.exit(0);
-        });
 
+        botaoSair.addActionListener(e -> System.exit(0));
 
-        // Adiciona o mainPanel no frame
+        // Exibe a janela
         frame.add(mainPanel);
-
         frame.setVisible(true);
     }
+
     private static JButton criarBotao(String texto, Color corFundo, Font fonte) {
         JButton botao = new JButton(texto);
         botao.setBackground(corFundo);
